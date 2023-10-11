@@ -60,7 +60,7 @@ app.get("/api/ethereum/view-all-task", async(req,res) => {
     }
 })
 
-const PORT = 3000;
+const PORT = 5173;
 
 
 // checking if server is running or not
