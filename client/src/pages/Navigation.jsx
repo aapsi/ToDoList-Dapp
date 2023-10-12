@@ -2,7 +2,7 @@ import {Link} from "react-router-dom";
 const Navigation =()=>{
     return(
         <header>
-        <div className="logo">TODO 3.O</div>
+        <div className="logo">To Do List 3.O</div>
         <nav>
           <ul>
           <li>
