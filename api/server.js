@@ -5,6 +5,8 @@ const  {Web3} = require('web3');
 
 // to run the server
 const app = express();
+// middleware because in client side we are sending the data in json
+app.use(express.json())
 app.use(cors());
 
 // adding rpc
@@ -25,22 +27,29 @@ const dateclashCheck = async(taskDate) => {
     return "No Task Found";
 }
 
-app.post("/api/ethereum/create-task", async(req, res) => {
+const priorityCheck = async(id)=>{
+    const tasks = await contract.methods.allTask().call();
+    const result = tasks[id-1].name.includes("priority")
+    return result;
+}
+
+app.post("/api/ethereum/create-task",async(req,res)=>{
     // you cannot do this because to write to a blockchain you need to provide your address and private key 
     // but here we will be giving the server our private keys and that's stupid :)
     
     // await contract.methods.createTask("blockchain", "11/10/").send({from:"0x......."})
-    const {taskDate} = req.body;
+    const {taskDate}=req.body; 
     const task = await dateclashCheck(taskDate);
     try{
-        if(task==="No Task Found"){
-            res.status(200).json({status:200, message:"Task can be added"})
+        if(task!=="No Task Found"){
+            res.status(409).json({status:409,message:"Date clash:Task cannot be added"})
+        }else{
+            res.status(200).json({status:200,message:"Task can be added"})
         }
     }catch(error){
-        console.error(ErrorDescription)
-}
-
-})
+        console.error(error)
+    }
+    })
 
 app.get("/api/ethereum/view-task/:taskId", async(req, res) => {
 
@@ -63,22 +72,49 @@ app.get("/api/ethereum/view-task/:taskId", async(req, res) => {
     
 })
 
-app.get("/api/ethereum/view-all-tasks", async(req,res) => {
+app.get("/api/ethereum/view-all-tasks",async(req,res)=>{
     try{
         const tasks = await contract.methods.allTask().call();
-        if(tasks.lenght<0){
-            res.status(404).json({status:404, message: "Task List Does Not Exist"});
-        }
-        else{
-            const taskList = tasks.map(({id, name, date}) =>{
-                const taskId = Number(id);
-                return {taskId, name, date};
+        if(tasks.length<0){
+            res.status(404).json({status:404,message:"Task list does not exist"})
+        }else{
+            const taskList = tasks.map(({id,name,date})=>{
+               const taskId=Number(id);
+               return {taskId,name,date}
             })
-            res.status(200).json({status:200, taskList, message: "Task Exist"})
+            res.status(200).json({status:200,taskList,message:"Task Exist"})
         }
+    }catch(error){
+        console.error(error)
     }
-    catch(error){
-        console.log(error)
+})
+
+
+app.post("/api/ethereum/update-task",async(req,res)=>{
+    const {taskDate}=req.body; 
+    const task = await dateclashCheck(taskDate);
+    try{
+      if(task!=="No Task Found"){
+         res.status(409).json({status:409,message:"Date clash:Task cannot be updated"})
+      }else{
+         res.status(200).json({status:200,message:"Task can be updated"})
+      }
+    }catch(error){
+     console.error(error)
+    }
+})
+
+app.delete("/api/ethereum/delete-task/:taskId",async(req,res)=>{
+    try{
+      const {taskId}=req.params;
+      const isTrue = await priorityCheck(taskId);
+      if(isTrue){
+        res.status(403).json({status:403,message:"Task cannot be deleted"})
+      }else{
+        res.status(200).json({status:200,message:"Task can be deleted"})
+      }
+    }catch(error){
+      console.error(error)
     }
 })
 

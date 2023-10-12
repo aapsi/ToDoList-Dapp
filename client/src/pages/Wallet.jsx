@@ -1,7 +1,7 @@
 import React from 'react'
 import {Web3} from "web3";
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react'
+// import { useState, useEffect } from 'react'
 import ABI from "./ABI.json"
 
 const Wallet = ({saveState}) => {
@@ -17,8 +17,8 @@ const Wallet = ({saveState}) => {
           method: "eth_requestAccounts"
         })
         
-        const contractAddress = "0x34bc0b6bde2bad3c21a0ec3a155ee17b000fa00a"
-        const contract = new web3.eth.Contract(ABI, contractAddress);
+        const contractAddress = "0x34bc0b6BdE2bad3C21A0Ec3a155ee17B000Fa00A"
+        const contract = new web3.eth.Contract(ABI,contractAddress);
         // setting the values to saveState that was passed as props 
         saveState({web3:web3,contract:contract,account:accounts[0]})
         //  what we are doing here is navigating to view all tasks page as soon as the wallet is connected and we get our state        
@@ -33,9 +33,18 @@ const Wallet = ({saveState}) => {
     }
 
   }
-  return (
-    <div><button onClick= {connectWallet}>Connect Wallet</button></div>
-  )
+
+  return(
+    <>
+      <div className="wallet_header ">
+        <span>WELCOME TO</span> <p>TODO 3.0</p>
+      </div>
+      <div className="connect_wallet_section todo_btn">
+        <p> Please connect metamask wallet to access the app </p>
+        <button onClick={connectWallet}>Connect Wallet</button>
+      </div>
+    </>
+  );
 }
 
 export default Wallet

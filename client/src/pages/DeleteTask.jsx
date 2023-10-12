@@ -1,8 +1,11 @@
 import React from 'react'
+import Navigation from './Navigation';
 
 const DeleteTask = () => {
   return (
-    <div>DeleteTask</div>
+    <div>
+      <Navigation/>
+    </div>
   )
 }
 

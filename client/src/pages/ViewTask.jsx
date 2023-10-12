@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState } from "react"
+import Navigation from './Navigation';
 
 const ViewTask = () => {
   const [task, setTask] = useState([]);
@@ -25,7 +26,7 @@ const ViewTask = () => {
       // }
 
       const data = await res.json();
-      if(data.status == 200) {
+      if(data.status === 200) {
         setTask(data.taskObj)
       }
       console.log(data)
@@ -38,6 +39,7 @@ const ViewTask = () => {
 
   return (
     <div>
+      <Navigation/>
       <form onSubmit={viewTask}>
         <label>
           ID:
